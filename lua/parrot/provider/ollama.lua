@@ -7,6 +7,7 @@ local utils = require("parrot.utils")
 ---@field api_key string|table
 ---@field name string
 ---@field ollama_installed boolean
+---@field use_local_ollama boolean
 local Ollama = {}
 Ollama.__index = Ollama
 
@@ -41,13 +42,15 @@ local AVAILABLE_API_PARAMETERS = {
 -- Creates a new Ollama instance
 ---@param endpoint string
 ---@param api_key string|table (not used for Ollama but kept for consistency)
+---@param use_local_ollama boolean
 ---@return Ollama
-function Ollama:new(endpoint, api_key)
+function Ollama:new(endpoint, api_key, use_local_ollama)
   return setmetatable({
     endpoint = endpoint,
     api_key = api_key,
     name = "ollama",
     ollama_installed = vim.fn.executable("ollama") == 1,
+    use_local_ollama = run_ollama,
   }, self)
 end
 
@@ -102,7 +105,7 @@ end
 -- Returns the list of available models
 ---@return string[]
 function Ollama:get_available_models()
-  if not self.ollama_installed and string.match(self.endpoint, "localhost") then
+  if self.use_local_ollama and not self.ollama_installed and string.match(self.endpoint, "localhost") then
     logger.error("Ollama is not installed or not in PATH.")
     return {}
   end
