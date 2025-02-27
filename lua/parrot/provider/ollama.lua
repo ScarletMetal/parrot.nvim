@@ -50,7 +50,7 @@ function Ollama:new(endpoint, api_key, use_local_ollama)
     api_key = api_key,
     name = "ollama",
     ollama_installed = vim.fn.executable("ollama") == 1,
-    use_local_ollama = run_ollama,
+    use_local_ollama = use_local_ollama,
   }, self)
 end
 
